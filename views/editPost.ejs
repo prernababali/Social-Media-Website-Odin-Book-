@@ -1,0 +1,30 @@
+<%- include('partials/header') %>
+
+<div class="container mt-4">
+  <h2>Edit Post</h2>
+
+  <form action="/posts/<%= post.id %>?_method=PUT" method="POST" enctype="multipart/form-data">
+    <div class="mb-3">
+      <label for="caption" class="form-label">Caption</label>
+      <textarea name="caption" id="caption" class="form-control"><%= post.caption %></textarea>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Current Image:</label><br>
+      <% if (post.imageUrl) { %>
+        <img src="<%= post.imageUrl %>" class="img-thumbnail" style="max-width: 300px;">
+      <% } else { %>
+        <p>No image uploaded</p>
+      <% } %>
+    </div>
+
+    <div class="mb-3">
+      <label for="image" class="form-label">Change Image (optional)</label>
+      <input type="file" class="form-control" name="image" id="image">
+    </div>
+
+    <button type="submit" class="btn btn-primary">Update Post</button>
+  </form>
+</div>
+
+<%- include('partials/footer') %>

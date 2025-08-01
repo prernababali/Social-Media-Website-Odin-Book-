@@ -1,0 +1,16 @@
+<div class="container py-5">
+  <h3 class="mb-4 fw-bold text-center">COMMUNITY POSTS</h3>
+
+  <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+    <% posts.forEach(post => { %>
+      <div class="col">
+        <!-- 👇 keep your existing post content here 👇 -->
+        <p><%= post.content %></p>
+        <p>By <a href="/users/<%= post.author.id %>">Read more</a></p>
+        <img src="<%= post.imageUrl %>" class="img-fluid" alt="Post image">
+        <!-- 👆 keep this part exactly as it is -->
+      </div>
+    <% }) %>
+  </div>
+</div>
+

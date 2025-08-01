@@ -1,0 +1,28 @@
+<%- include('../partials/header') %>
+
+<div class="row justify-content-center">
+  <div class="col-md-8">
+    <h2 class="mb-4 fw-bold text-center">Edit Your Profile</h2>
+    <form action="/users/edit-profile" method="POST" class="shadow p-4 bg-light rounded">
+      <div class="mb-3">
+        <label for="name" class="form-label">Full Name</label>
+        <input type="text" name="name" id="name" value="<%= user.name %>" class="form-control" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="email" class="form-label">Email (read-only)</label>
+        <input type="email" name="email" id="email" value="<%= user.email %>" class="form-control" readonly>
+      </div>
+
+      <div class="mb-3">
+        <label for="password" class="form-label">New Password (optional)</label>
+        <input type="password" name="password" id="password" class="form-control">
+        <div class="form-text">Leave blank to keep current password.</div>
+      </div>
+
+      <button type="submit" class="btn btn-success w-100">Update Profile</button>
+    </form>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

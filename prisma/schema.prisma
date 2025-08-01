@@ -1,0 +1,84 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         Int       @id @default(autoincrement())
+  username   String
+  email      String    @unique
+  password   String
+  imageUrl   String    @default("https://i.pravatar.cc/100")
+  bio        String?   // ✅ Add this
+  profilePic String?   // ✅ Add this (if using Cloudinary uploads)
+
+  posts      Post[]
+  comments   Comment[]
+  likes      Like[]
+
+  followers  Follower[] @relation("FollowerRelation")
+  following  Follower[] @relation("FollowingRelation")
+}
+
+
+model Post {
+  id        Int       @id @default(autoincrement())
+  content   String
+  imageUrl  String?
+  createdAt DateTime  @default(now())
+
+  author    User      @relation(fields: [authorId], references: [id])
+  authorId  Int
+
+  comments  Comment[]
+  likes     Like[]
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  text      String
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+
+  post      Post     @relation(fields: [postId], references: [id])
+  postId    Int
+}
+
+model Like {
+  id     Int  @id @default(autoincrement())
+
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
+
+  post   Post @relation(fields: [postId], references: [id])
+  postId Int
+
+  @@unique([userId, postId]) // ✅ Prevent duplicate likes
+}
+
+model Follower {
+  id           Int  @id @default(autoincrement())
+
+  follower     User @relation("FollowerRelation", fields: [followerId], references: [id])
+  followerId   Int
+
+  following    User @relation("FollowingRelation", fields: [followingId], references: [id])
+  followingId  Int
+
+  @@unique([followerId, followingId]) // ✅ Prevent duplicate follows
+}
+
+model Session {
+  id            String   @id @default(cuid())
+  sid           String   @unique
+  data          String
+  expiresAt     DateTime
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}

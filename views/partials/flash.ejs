@@ -1,0 +1,14 @@
+
+
+
+<% if (success_msg && success_msg.length > 0 && success_msg[0] !== 'Please register to continue') { %>
+  <div class="alert alert-success"><%= success_msg[0] %></div>
+<% } %>
+
+<% if (error_msg && error_msg.length > 0 && error_msg[0] !== 'Please register to continue') { %>
+  <div class="alert alert-danger"><%= error_msg[0] %></div>
+<% } %>
+
+<% if (error && error.length > 0 && error[0] !== 'Please register to continue') { %>
+  <div class="alert alert-danger"><%= error[0] %></div>
+<% } %>

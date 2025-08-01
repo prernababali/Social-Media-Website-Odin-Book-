@@ -1,0 +1,19 @@
+<%- include('../partials/header') %>
+
+<h2 class="mb-4 fw-bold text-center">User Directory</h2>
+
+<div class="row row-cols-1 row-cols-md-3 g-4">
+  <% users.forEach(user => { %>
+    <div class="col">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <h5 class="card-title"><%= user.name %></h5>
+          <p class="card-text text-muted"><%= user.email %></p>
+          <a href="/users/<%= user._id %>" class="btn btn-outline-primary btn-sm">View Profile</a>
+        </div>
+      </div>
+    </div>
+  <% }) %>
+</div>
+
+<%- include('../partials/footer') %>

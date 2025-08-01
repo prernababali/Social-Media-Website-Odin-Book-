@@ -1,0 +1,24 @@
+<%- include('partials/header') %>
+
+<div class="container mt-5">
+  <h3 class="mb-4">People You May Want to Follow</h3>
+
+  <% if (suggestions.length === 0) { %>
+    <p class="text-muted">No suggestions — you’re following everyone!</p>
+  <% } else { %>
+    <div class="list-group">
+      <% suggestions.forEach(user => { %>
+        <div class="list-group-item d-flex justify-content-between align-items-center">
+          <span>@<%= user.username %></span>
+          <form action="/users/<%= user.id %>/follow" method="POST">
+            <button type="submit" class="btn btn-sm btn-outline-success">Follow</button>
+          </form>
+        </div>
+      <% }) %>
+    </div>
+  <% } %>
+
+  <a href="/dashboard" class="btn btn-secondary mt-4">⬅️ Back to Dashboard</a>
+</div>
+
+<%- include('partials/footer') %>
