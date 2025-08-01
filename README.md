@@ -1,5 +1,5 @@
 OdinBook - A Node.js Social Media App
-OdinBook is a full-stack social media web application inspired by Social media apps, built as part of The Odin Project's Node.js curriculum. It allows users to sign up, log in, create posts, follow/unfollow other users, and view a personalized feed. This project demonstrates strong backend skills using Node.js, Express, MongoDB, and Passport.js.
+OdinBook is a full-stack social media web application inspired by Social media apps, built as part of The Odin Project's Node.js curriculum. It allows users to sign up, log in, create posts, follow/unfollow other users, and view a personalized feed. This project demonstrates strong backend skills using Node.js, prsima, Express, MongoDB, and Passport.js.
 
 #Live Demo
 🔗 [Add your deployed link here, if hosted]
