@@ -1,106 +1,173 @@
-OdinBook - A Node.js Social Media App
-OdinBook is a full-stack social media web application inspired by Social media apps, built as part of The Odin Project's Node.js curriculum. It allows users to sign up, log in, create posts, follow/unfollow other users, and view a personalized feed. This project demonstrates strong backend skills using Node.js, prsima, Express, MongoDB, and Passport.js.
+# 📱 OdinBook — A Full-Stack Social Media Platform
 
-#Live Demo
-🔗 [Add your deployed link here, if hosted]
+**OdinBook** is a responsive, modern full-stack social media web application developed as part of [The Odin Project](https://www.theodinproject.com/) curriculum. It replicates core functionalities of platforms like Facebook and Twitter — enabling user interaction through posts, comments, likes, and social followings, all within a secure, session-based authentication system.
 
-#Screenshots
-🖼️ Home Feed
+---
 
-🧑‍🤝‍🧑 User Profile
+## 🚀 Project Highlights
 
-✍️ Create Post
+> OdinBook showcases how full-stack concepts work in harmony — from database modeling and user authentication to frontend templating and stateful user sessions.
 
+### 🔐 Authentication & Security
+- Local authentication via **Passport.js** using username & password
+- Middleware (`ensureAuth`) to protect all internal routes
+- **Session management** using `express-session` and persistent PostgreSQL-based storage
 
+### 👥 User Social System
+- Browse all registered users
+- Send and manage **follow requests** (pending or accepted)
+- View other users’ profile pages with their posts and statistics
 
-#Tech Stack
+### 📝 Post Feed
+- Create and manage text-based posts
+- See your posts and those from users you follow
+- Post cards display author info, likes, and comments
 
-Backend:
+### ❤️ Like & Comment System
+- Like/unlike any post with immediate feedback
+- Comment with author & timestamp shown
+- Clean UI experience with real-time visibility
 
-Node.js
+### 🧾 Personalized Dashboard
+- Displays posts only from followed users + your own
+- Sorted in reverse chronological order (latest first)
+- Clean Bootstrap cards with structured content
 
-Express.js
+### 👤 User Profile Page
+- View profile details, follower/following count
+- Upload and update **profile pictures via Cloudinary**
+- Only logged-in users can view/edit profiles
 
-Database:
+---
 
-MongoDB
+## 🛠️ Tech Stack Overview
 
-Mongoose
+| Layer             | Technology                                               |
+|------------------|----------------------------------------------------------|
+| **Backend**       | Node.js, Express.js                                     |
+| **Database**      | PostgreSQL with Prisma ORM                              |
+| **Authentication**| Passport.js (Local Strategy)                            |
+| **Sessions**      | `express-session`, `@quixo3/prisma-session-store`       |
+| **Views/UI**      | EJS Templates + Bootstrap 5                             |
+| **File Uploads**  | Cloudinary for image storage                            |
+| **Validation**    | express-validator, connect-flash (for messages/errors)  |
 
-Templating:
+---
 
-EJS (Embedded JavaScript)
+## 📁 Folder Structure
 
-Authentication & Security:
+odinbook/
+│
+├── controllers/ # Logic for auth, users, posts, follows, etc.
+├── routes/ # Express route definitions (modularized)
+│ ├── auth.js # Login & Register routes
+│ ├── post.js # Create, like, comment on posts
+│ └── user.js # Follow/unfollow, profiles
+│
+├── views/ # EJS templates (with Bootstrap layout)
+│ ├── partials/ # Header, footer, flash messages
+│ ├── auth/ # login.ejs, register.ejs
+│ ├── profile.ejs # Profile view
+│ ├── dashboard.ejs # User dashboard (feed)
+│ └── users.ejs # All users list
+│
+├── public/ # Static files (CSS, uploads, etc.)
+│
+├── middlewares/ # Custom middleware (ensureAuth)
+│
+├── prisma/ # Prisma schema and migration files
+│ ├── schema.prisma # User, Post, Follow, Like, Comment models
+│
+├── app.js # Main Express app setup
+├── .env # Environment config (not committed)
+├── package.json # Dependencies and scripts
+└── README.md # You’re reading it!
 
-Passport.js (Local Strategy)
+pgsql
+Copy
+Edit
 
-bcryptjs (Password Hashing)
+---
 
-express-session
+## ✅ Feature Checklist (Based on Assignment)
 
-connect-mongo
+| Feature Description                                         | Implemented |
+|-------------------------------------------------------------|-------------|
+| Users must sign in to access app features                   | ✅          |
+| Users can register and log in (local strategy)              | ✅          |
+| Users can create posts (text only)                          | ✅          |
+| Users can like/unlike posts                                 | ✅          |
+| Users can comment on posts                                  | ✅          |
+| Posts display content, author, likes, and comments          | ✅          |
+| Users can follow/unfollow each other                        | ✅          |
+| Dashboard shows posts from self and followed users          | ✅          |
+| Users can view all users with follow options                | ✅          |
+| Profiles include user info, photo, post list                | ✅          |
+| Profile picture uploads via Cloudinary                      | ✅          |
 
-Validation & Utilities:
+---
 
-express-validator
+## 🧪 How to Run Locally
 
-dotenv
+1. **Clone the repo**
+   ```bash
+   git clone https://github.com/yourusername/odinbook.git
+   cd odinbook
+Install dependencies
 
-Multer (for file upload, optional)
+bash
+Copy
+Edit
+npm install
+Set up environment
+Create a .env file in the root with:
 
-Other Tools:
+ini
+Copy
+Edit
+DATABASE_URL=postgresql://user:password@localhost:5432/odinbook
+SESSION_SECRET=your_secret_key
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+Set up Prisma
 
-npm
+bash
+Copy
+Edit
+npx prisma migrate dev --name init
+npx prisma generate
+Run the app
 
-Git & GitHub
+bash
+Copy
+Edit
+npm run dev
+Visit: http://localhost:3000
 
-Postman
+📸 Screenshots
+Replace the image links below with actual Cloudinary or local screenshot paths.
 
-Replit (for deployment)
+🔐 Login Page
 
-# Features
-1.  Secure User Authentication (Sign Up, Log In, Log Out)
+🏠 Dashboard (Feed)
 
-2.  Create, Edit, and Delete Posts
+👤 Profile Page
 
-3.  Personalized Feed showing posts from followed users
+🧠 What I Learned
+Setting up full user authentication with Passport.js
 
-4.  Follow / Unfollow functionality
+Handling relational data (follows, comments, likes) with Prisma
 
-5.  Profile Pages with user posts
+Creating dynamic UI using EJS + Bootstrap
 
-6. Form Validation and Sanitization
+Managing media uploads via Cloudinary
 
-7.  MVC Architecture
+Building secure, RESTful Express routes with session control
 
-8.  Organized Folder Structure with Routes, Controllers, and Models
+Designing social logic (feed, profile, permissions, follow logic)
 
-
-# What I Learned
-
---> How to build a real-world backend system with Node.js and Express
-
---> Setting up MongoDB schemas and relationships using Mongoose
-
---> Implementing secure authentication using Passport.js and bcrypt
-
---> Managing sessions and protecting routes
-
---> Using EJS to render dynamic content on the frontend
-
---> Handling user data safely with express-validator
-
---> Deploying full-stack apps with Replit
-
---> Clean code architecture using the MVC pattern
-
-
-
-# About Me
-Prerana Bubbly
-Aspiring Backend Developer | Node.js & JavaScript Enthusiast
-
-
-📜 License
-This project is open-source and available under the MIT License.
+🧑‍💻 Author
+Prerana Babali
+Built as a final project for The Odin Project
+GitHub: @preranababali
