@@ -51,19 +51,29 @@
 
 
 ## Folder Structure
+
 odinbook/
 │
 ├── controllers/ # Logic for auth, users, posts, follows, etc.
+
 ├── routes/ # Express route definitions (modularized)
+
 │ ├── auth.js # Login & Register routes
+
 │ ├── post.js # Create, like, comment on posts
+
 │ └── user.js # Follow/unfollow, profiles
 │
 ├── views/ # EJS templates (with Bootstrap layout)
+
 │ ├── partials/ # Header, footer, flash messages
+
 │ ├── auth/ # login.ejs, register.ejs
+
 │ ├── profile.ejs # Profile view
+
 │ ├── dashboard.ejs # User dashboard (feed)
+
 │ └── users.ejs # All users list
 │
 ├── public/ # Static files (CSS, uploads, etc.)
@@ -71,11 +81,15 @@ odinbook/
 ├── middlewares/ # Custom middleware (ensureAuth)
 │
 ├── prisma/ # Prisma schema and migration files
+
 │ ├── schema.prisma # User, Post, Follow, Like, Comment models
 │
 ├── app.js # Main Express app setup
+
 ├── .env # Environment config (not committed)
+
 ├── package.json # Dependencies and scripts
+
 └── README.md # You’re reading it!
 
 
@@ -126,6 +140,7 @@ npx prisma generate
 5. Run the app
 npm run dev
 Visit: http://localhost:3000
+
 
 # What I Learned
 1. Setting up full user authentication with Passport.js
