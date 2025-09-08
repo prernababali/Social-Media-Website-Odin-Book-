@@ -64,6 +64,7 @@ odinbook/
 
 │ └── user.js # Follow/unfollow, profiles
 │
+
 ├── views/ # EJS templates (with Bootstrap layout)
 
 │ ├── partials/ # Header, footer, flash messages
@@ -76,14 +77,19 @@ odinbook/
 
 │ └── users.ejs # All users list
 │
+
 ├── public/ # Static files (CSS, uploads, etc.)
 │
+
 ├── middlewares/ # Custom middleware (ensureAuth)
 │
+
 ├── prisma/ # Prisma schema and migration files
+
 
 │ ├── schema.prisma # User, Post, Follow, Like, Comment models
 │
+
 ├── app.js # Main Express app setup
 
 ├── .env # Environment config (not committed)
