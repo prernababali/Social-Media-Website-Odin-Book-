@@ -4,7 +4,14 @@ const { PrismaClient } = require('@prisma/client');
 const ensureAuth = require('../middlewares/ensureAuth');
 const prisma = new PrismaClient();
 
+// ✅ Debug: confirm this file is loaded
+console.log("✅ index.js loaded from:", __filename);
+
+// 🔍 Debug: check router type
+console.log("index.js router type:", typeof router);
+
 // Home page – show all posts
+console.log("route '/' handler type:", typeof (async (req, res) => {}));
 router.get("/", async (req, res) => {
   try {
     const posts = await prisma.post.findMany({
@@ -19,24 +26,9 @@ router.get("/", async (req, res) => {
   }
 });
 
-// Dashboard route
-//router.get("/dashboard", ensureAuth, async (req, res) => {
-   //console.log("🛬 DASHBOARD route hit");          // ← ADD HERE
-  //console.log("req.user:", req.user);             // ← ADD HERE
-  //try {
-    ////const userWithPosts = await prisma.user.findUnique({
-      //where: { id: req.user.id },
-      //include: { posts: true },
-    //});
-
-    //res.render("dashboard", { user: userWithPosts });
-    //res.render("dashboard", { currentUser: userWithPosts });
-
-  //} catch (err) {
-    //console.error("Dashboard error:", err);
-    //res.render("error", { message: "Something went wrong." });
-  //}
-//});
 
 module.exports = router;
+
+
+
 

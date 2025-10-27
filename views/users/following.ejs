@@ -1,0 +1,13 @@
+<h2><%= user.username %> is Following</h2>
+<ul>
+  <% following.forEach(person => { %>
+    <li>
+      <%= person.username %>
+      <% if (currentUser.id === user.id) { %>
+        <form method="POST" action="/users/<%= person.id %>/unfollow" style="display:inline;">
+          <button class="btn btn-sm btn-warning">Unfollow</button>
+        </form>
+      <% } %>
+    </li>
+  <% }) %>
+</ul>

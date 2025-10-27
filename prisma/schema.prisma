@@ -13,17 +13,18 @@ model User {
   email      String    @unique
   password   String
   imageUrl   String    @default("https://i.pravatar.cc/100")
-  bio        String?   // ✅ Add this
-  profilePic String?   // ✅ Add this (if using Cloudinary uploads)
+  bio        String?
+  profilePic String?
 
   posts      Post[]
   comments   Comment[]
   likes      Like[]
+  stories    Story[]
 
-  followers  Follower[] @relation("FollowerRelation")
-  following  Follower[] @relation("FollowingRelation")
+  // ✅ These are the inverse sides of the Follower model
+  followedBy Follower[] @relation("FollowingRelation") // People who follow *this* user
+  follows    Follower[] @relation("FollowerRelation")  // Users this user is following
 }
-
 
 model Post {
   id        Int       @id @default(autoincrement())
@@ -65,9 +66,11 @@ model Like {
 model Follower {
   id           Int  @id @default(autoincrement())
 
+  // ✅ Forward relation to the follower user
   follower     User @relation("FollowerRelation", fields: [followerId], references: [id])
   followerId   Int
 
+  // ✅ Forward relation to the followed user
   following    User @relation("FollowingRelation", fields: [followingId], references: [id])
   followingId  Int
 
@@ -81,4 +84,17 @@ model Session {
   expiresAt     DateTime
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+}
+
+
+model Story {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  user       User     @relation(fields: [userId], references: [id])
+
+  mediaUrl   String   // uploaded image or video
+  mediaType  String   // "image" | "video"
+
+  createdAt  DateTime @default(now())
+  expiresAt  DateTime
 }

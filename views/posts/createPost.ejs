@@ -1,26 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Post - OdinBook</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">OdinBook</a>
+        </div>
+    </nav>
 
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <h2 class="mb-4 text-center text-primary">CREATE POST + UPDATE PROFILE</h2>
+                
+                <!-- DEBUG MESSAGE -->
+                <div class="alert alert-success">
+                    <h4>✅ DEBUG: This page is working!</h4>
+                    <p>If you see this, the new EJS file is loading correctly.</p>
+                </div>
 
+                <!-- Separate form for profile updates only -->
+                <form action="/posts/update-profile" method="POST" enctype="multipart/form-data" class="mb-4">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h5>📋 Update Profile Only</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">🖼️ Profile Picture</label>
+                                <input type="file" name="profilePic" class="form-control" accept="image/*">
+                                <small class="text-muted">Update your profile picture without creating a post</small>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">📝 Bio</label>
+                                <textarea name="bio" class="form-control" rows="3" placeholder="Update your bio..."><%= user && user.bio || '' %></textarea>
+                                <small class="text-muted">Update your bio without creating a post</small>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">💾 Update Profile Only</button>
+                        </div>
+                    </div>
+                </form>
 
+                <!-- Existing form for posts + profile -->
+                <form action="/posts/create" method="POST" enctype="multipart/form-data" class="bg-white p-4 rounded shadow">
 
-<%- include('../partials/header') %>
+                    <!-- 🟦 PROFILE SECTION -->
+                    <div class="border border-primary rounded p-3 mb-4" style="background-color: #e3f2fd;">
+                        <h4 class="text-primary mb-3">👤 PROFILE SETTINGS (with Post)</h4>
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">🖼️ Update Profile Picture</label>
+                            <input type="file" name="profilePic" class="form-control" accept="image/*">
+                            <small class="text-muted">Choose a new profile picture</small>
+                        </div>
 
-<div class="row justify-content-center">
-  <div class="col-md-8">
-    <h2 class="mb-4 fw-bold">Create a New Post</h2>
-    <form action="/posts/create" method="POST" enctype="multipart/form-data" class="shadow p-4 bg-white rounded">
-      <div class="mb-3">
-        <label for="content" class="form-label">Post Content</label>
-        <textarea name="content" id="content" rows="4" class="form-control" required></textarea>
-      </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">📝 Edit Your Bio</label>
+                            <textarea name="bio" class="form-control" rows="3" placeholder="Tell everyone about yourself..."><%= user && user.bio || '' %></textarea>
+                            <small class="text-muted">Write something about yourself</small>
+                        </div>
+                    </div>
 
-      <div class="mb-3">
-        <label for="image" class="form-label">Image (optional)</label>
-        <input type="file" name="image" id="image" class="form-control" accept="image/*" />
-      </div>
+                    <!-- 🟩 POST SECTION -->
+                    <div class="border border-success rounded p-3 mb-4" style="background-color: #e8f5e8;">
+                        <h4 class="text-success mb-3">📝 CREATE NEW POST</h4>
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">✏️ Post Content *</label>
+                            <textarea name="content" class="form-control" rows="4" placeholder="What's on your mind?" required></textarea>
+                        </div>
 
-      <button type="submit" class="btn btn-primary">Post</button>
-    </form>
-  </div>
-</div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">🖼️ Post Image (Optional)</label>
+                            <input type="file" name="image" class="form-control" accept="image/*">
+                        </div>
+                    </div>
 
-<%- include('../partials/footer') %>
+                    <button type="submit" class="btn btn-success btn-lg w-100">🚀 Create Post & Update Profile</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-dark text-white text-center py-3 mt-5">
+        <p>© 2025 OdinBook. Built using Node.js and Bootstrap.</p>
+    </footer>
+</body>
+</html>

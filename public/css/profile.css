@@ -1,0 +1,37 @@
+
+.profile-pic-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.profile-pic {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 3px solid #ccc;
+  object-fit: cover;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.profile-pic.story-active {
+  border: 3px solid transparent;
+  background: linear-gradient(45deg, #f58529, #dd2a7b, #8134af, #515bd4);
+  padding: 3px;
+}
+
+.add-story-btn {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  background-color: #0095f6;
+  color: white;
+  border-radius: 50%;
+  font-size: 20px;
+  width: 28px;
+  height: 28px;
+  text-align: center;
+  line-height: 26px;
+  border: 2px solid white;
+  cursor: pointer;
+}

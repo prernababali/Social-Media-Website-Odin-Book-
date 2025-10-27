@@ -30,6 +30,7 @@ app.get("/check", (req, res) => {
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(methodOverride("_method"));
 
 // Sessions
@@ -74,8 +75,9 @@ app.use("/posts", require("./routes/postRoutes"));
 app.use("/users", require("./routes/userRoutes"));
 
 
+
 // ✅ Move this here, not in postRoutes!
-//router.get('/dashboard', ensureAuth, postController.getDashboard);
+//router.get('/dashboard', ensureAuth, postController.getDashboard)
 
 // 🔥 Test route to verify routing works
 app.get('/test-dashboard', (req, res) => {

@@ -1,0 +1,85 @@
+<style>
+  .sidebar-fixed {
+    position: sticky;
+    top: 80px; /* Adjust if your navbar height is different */
+    height: calc(100vh - 80px);
+    overflow-y: auto;
+    padding-top: 1rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+
+  .sidebar-link {
+    color: #333;
+    font-weight: 500;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    padding: 0.6rem 0.8rem;
+    border-radius: 10px;
+    transition: background 0.2s ease;
+  }
+
+  .sidebar-link:hover {
+    background-color: #e9ecef;
+    text-decoration: none;
+  }
+
+  .sidebar-link img {
+    width: 30px;
+    height: 30px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin-right: 10px;
+  }
+
+  .sidebar-section-title {
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: #6c757d;
+    margin-top: 2rem;
+    margin-bottom: 0.5rem;
+    padding-left: 0.8rem;
+  }
+</style>
+
+<div class="sidebar-fixed">
+  <!-- ✅ User Info -->
+  <a href="/users/<%= currentUser.id %>" class="sidebar-link">
+    <img src="<%= currentUser.imageUrl || '/images/default-avatar.png' %>" alt="Avatar">
+    <span><%= currentUser.username %></span>
+  </a>
+
+  <!-- ✅ Main Navigation -->
+  <a href="/users/dashboard" class="sidebar-link">
+    <i class="bi bi-house-door-fill me-2"></i> Home
+  </a>
+  <a href="#" class="sidebar-link">
+    <i class="bi bi-people-fill me-2"></i> Friends
+  </a>
+  <a href="#" class="sidebar-link">
+    <i class="bi bi-collection-play-fill me-2"></i> Watch
+  </a>
+  <a href="#" class="sidebar-link">
+    <i class="bi bi-flag-fill me-2"></i> Pages
+  </a>
+  <a href="#" class="sidebar-link">
+    <i class="bi bi-calendar-event-fill me-2"></i> Events
+  </a>
+  <a href="#" class="sidebar-link">
+    <i class="bi bi-shop-window me-2"></i> Marketplace
+  </a>
+
+  <!-- ✅ Section: Pages You Like -->
+  <div class="sidebar-section-title">Pages You Like</div>
+
+  <a href="#" class="sidebar-link">
+    <img src="/images/fashion.jpg" alt="Fashion"> Fashion Design
+  </a>
+  <a href="#" class="sidebar-link">
+    <img src="/images/artist.jpg" alt="Artist"> Artist Hub
+  </a>
+  <a href="#" class="sidebar-link">
+    <img src="/images/tech.jpg" alt="Tech"> Tech Trends
+  </a>
+</div>

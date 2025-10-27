@@ -11,21 +11,43 @@ console.log("✅ postController.js loaded");
 // GET /posts/feed
 const getFeed = async (req, res) => {
   try {
-    res.send("Feed goes here"); // placeholder
+    const posts = await prisma.post.findMany({
+      where: {
+        authorId: req.user.id,  // only posts by logged-in user
+      },
+      orderBy: { createdAt: 'desc' },
+      include: {
+        author: true,
+        comments: { include: { user: true } },
+        likes: { include: { user: true } },
+      },
+    });
+
+    res.render("posts/view", { posts, user: req.user });
   } catch (err) {
-    console.error(err);
-    res.status(500).send("Server error");
+    console.error('❌ Error loading feed:', err);
+    req.flash('error', 'Could not load feed');
+    res.redirect('/');
   }
 };
 
 
-// GET /posts/create
-const getCreatePost = (req, res) => {
-  const fullPath = path.join(__dirname, "../views/posts/createPost.ejs");
-  console.log("Looking for file at:", fullPath);
-
-  res.render("posts/createPost");
+// In controllers/postController.js
+const getCreatePost = async (req, res) => {
+  try {
+    console.log("✅ GET /posts/new - Rendering create post page");
+    console.log("User data:", req.user ? "Available" : "Not available");
+    
+    // Render the template
+    res.render('posts/createPost', { 
+      user: req.user || {} // Ensure user is always an object
+    });
+  } catch (err) {
+    console.error("Error in getCreatePost:", err);
+    res.status(500).send("Server error");
+  }
 };
+
 
 
 // POST /posts/create
@@ -67,55 +89,81 @@ const postCreatePost = async (req, res, next) => {
 
 // get post by id
 const getPostById = async (req, res) => {
-    console.log("🧪 Post ID from URL:", req.params.id);
-  const postId = parseInt(req.params.id);
-  const userId = req.user.id;
-
-
-    if (isNaN(postId)) {
-   return res.status(400).render('error', { message: `Invalid post ID: ${req.params.id}` });
-
-  }
-
-
   try {
+    const postId = parseInt(req.params.id);
+    console.log("➡️ getPostById called, req.params.id =", req.params.id);
+    console.log("➡️ parsed postId =", postId);
+
     const post = await prisma.post.findUnique({
       where: { id: postId },
       include: {
         author: true,
-        likes: true,
-        comments: {
-          include: {
-            user: true, // Optional: to display commenter's name or avatar
-          },
-        },
+        comments: { include: { user: true } },
+        likes: { include: { user: true } },
       },
     });
+
+    console.log("➡️ Found post:", post);
 
     if (!post) {
-      return res.status(404).render('error', { message: 'Post not found' });
+      console.log("❌ post not found, redirecting");
+      req.flash('error', 'Post not found');
+      return res.redirect('/posts');
     }
 
-    const existingLike = await prisma.like.findFirst({
-      where: {
-        postId: postId,
-        userId: userId,
-      },
-    });
-
-    const isLikedByCurrentUser = !!existingLike;
-
+    console.log("✅ Rendering view with post");
     res.render('posts/view', {
       post,
-      currentUser: req.user,
-      isLikedByCurrentUser,
+      user: req.user,
     });
-
   } catch (err) {
-    console.error(err);
-    res.status(500).render('error', { message: 'Server error' });
+    console.error('❌ Error in getPostById:', err);
+    req.flash('error', 'Something went wrong');
+    res.redirect('/posts');
   }
 };
+
+
+
+
+
+
+const getPostsByUserId = async (req, res) => {
+  try {
+    const profileUserId = parseInt(req.params.id);
+
+    const posts = await prisma.post.findMany({
+      where: {
+        authorId: profileUserId, // ✅ Not req.user.id — this shows posts of the profile being viewed
+      },
+      orderBy: { createdAt: 'desc' },
+      include: {
+        author: true,
+        comments: { include: { user: true } },
+        likes: { include: { user: true } },
+      },
+    });
+      
+    const profileUser = await prisma.user.findUnique({
+  where: { id: profileUserId },
+});
+
+
+
+    res.render('posts/view', {
+      posts,
+      user: req.user,
+          profileUser,    
+      profileUserId,
+    });
+  } catch (err) {
+    console.error('❌ Error in getPostsByUserId:', err);
+    req.flash('error', 'Could not load user posts');
+    res.redirect('/');
+  }
+};
+
+
 
 
 
@@ -250,6 +298,7 @@ module.exports = {
   getCreatePost,
   postCreatePost,
   getPostById,
+  getPostsByUserId,
   deletePost,
   likePost,         // ✅ Add this
   commentPost,

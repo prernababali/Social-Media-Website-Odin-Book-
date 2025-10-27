@@ -27,11 +27,14 @@ const getProfile = async (req, res) => {
       where: { followerId: userId },
     });
 
+    // Add counts to user object
+    user.followersCount = followersCount;
+    user.followingCount = followingCount;
+
     res.render('users/profile', {
       user,
       posts: user.posts,
-      followersCount,
-      followingCount,
+      currentUser: req.user,
     });
 
   } catch (err) {
@@ -40,7 +43,7 @@ const getProfile = async (req, res) => {
   }
 };
 
-//******************************************************************************************************************************
+//******************************************************************************************************************************************
 const postProfile = async (req, res) => {
   const { username, bio } = req.body;
   let imageUrl;
@@ -63,13 +66,10 @@ const postProfile = async (req, res) => {
   res.redirect('/profile');
 };
 
-//************************************************************************************************************************** */
+//************************************************************************************************************************** 
 
 const getDashboard = async (req, res) => {
-  console.log("🎯 getDashboard controller hit");
-
   try {
-    // 1. Get the current user and their posts
     const currentUser = await prisma.user.findUnique({
       where: { id: req.user.id },
       include: {
@@ -77,17 +77,12 @@ const getDashboard = async (req, res) => {
           include: {
             author: true,
             likes: true,
-            comments: {
-              include: {
-                user: true,
-              },
-            },
+            comments: { include: { user: true } },
           },
         },
       },
     });
 
-    // 2. Get the list of users the current user is following
     const followingRelations = await prisma.follower.findMany({
       where: { followerId: req.user.id },
       include: { following: true },
@@ -95,52 +90,42 @@ const getDashboard = async (req, res) => {
 
     const followingIds = followingRelations.map(rel => rel.followingId);
 
-    console.log("👥 Following records found:", followingRelations.length);
-    console.log("➡️ Following IDs:", followingIds);
-
-    // 3. Get posts from followed users
     const followedPosts = await prisma.post.findMany({
-      where: {
-        authorId: { in: followingIds },
-      },
+      where: { authorId: { in: followingIds } },
       include: {
         author: true,
         likes: true,
-        comments: {
-          include: {
-            user: true,
-          },
-        },
+        comments: { include: { user: true } },
       },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
     });
 
-    // 4. Merge current user's posts + followed users' posts
     const allPosts = [...currentUser.posts, ...followedPosts].sort(
       (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
     );
 
-    // 5. Get suggested users to follow (not self, not already following)
     const otherUsers = await prisma.user.findMany({
       where: {
-        id: {
-          notIn: [req.user.id, ...followingIds],
-        },
+        id: { notIn: [req.user.id, ...followingIds] },
       },
-      select: {
-        id: true,
-        username: true,
-      },
+      select: { id: true, username: true, imageUrl: true },
     });
 
-    // 6. Render dashboard with all needed data
-    res.render('dashboard', {
+    // 👇 Dummy explore items
+    const exploreItems = [
+      { imageUrl: '/images/explore_page1.jpg', category: 'Product' },
+      { imageUrl: '/images/explore_page2.jpg', category: 'Website' },
+      { imageUrl: '/images/explore_page3.jpg', category: 'Illustration' },
+      { imageUrl: '/images/explore_page4.jpg', category: 'Branding' },
+    ];
+
+    res.render("dashboard", {
       currentUser,
       posts: allPosts,
       otherUsers,
       followingIds,
+      exploreItems, // ✅ pass here
     });
-
   } catch (err) {
     console.error("❌ getDashboard error:", err);
     res.status(500).send("Server error");
@@ -148,7 +133,8 @@ const getDashboard = async (req, res) => {
 };
 
 
-//************************************************************************************************************************************ */
+
+//************************************************************************************************************************************
 // SHOW FOLLOW SUGGESTIONS 
 const showFollowSuggestions = async (req, res) => {
   const userId = req.user.id;
@@ -226,30 +212,69 @@ const getOtherUserProfile = async (req, res) => {
     return res.status(400).render('error', { message: 'Invalid user ID' });
   }
 
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    include: { posts: true },
-  });
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        posts: {
+          include: {
+            author: true, // ✅ Required for post.author.username
+            likes: true,
+            comments: {
+              include: {
+                user: true, // ✅ Required for comment.user.username
+              },
+            },
+          },
+          orderBy: {
+            createdAt: 'desc',
+          },
+        },
+        stories: true,
+      },
+    });
 
-  if (!user) {
-    return res.status(404).render('error', { message: 'User not found' });
+    if (!user) {
+      return res.status(404).render('error', { message: 'User not found' });
+    }
+
+    const followersCount = await prisma.follower.count({
+      where: { followingId: user.id },
+    });
+
+    const followingCount = await prisma.follower.count({
+      where: { followerId: user.id },
+    });
+
+    user.followersCount = followersCount;
+    user.followingCount = followingCount;
+
+    const hasActiveStory = user.stories?.some((story) => {
+      const createdAt = new Date(story.createdAt);
+      const now = new Date();
+      const hoursDiff = (now - createdAt) / (1000 * 60 * 60);
+      return hoursDiff <= 24;
+    });
+
+    res.render('users/profile', {
+       profile: user,                       // 👤 profile user           // ✅ full post data with author/comments
+      currentUser: req.user,         // 👤 logged-in user
+      hasActiveStory,
+    });
+
+  } catch (err) {
+    console.error('Error fetching profile:', err);
+    res.status(500).render('error', { message: 'Something went wrong' });
   }
-
-  const followersCount = await prisma.follower.count({
-    where: { followingId: user.id },
-  });
-
-  const followingCount = await prisma.follower.count({
-    where: { followerId: user.id },
-  });
-
-  res.render('users/profile', {
-    user,
-    currentUser: req.user,
-    followersCount,
-    followingCount,
-  });
 };
+
+
+
+
+
+
+
+
 
 //******************************************************************************************************************************************** */
 // Update profile (e.g., profile picture, bio, etc.)
@@ -287,6 +312,166 @@ const updateProfile = async (req, res) => {
   }
 };
 
+// ***************************************************************************************************************************************
+const getFollowingList = async (req, res) => {
+  const userId = parseInt(req.params.id);
+
+  if (isNaN(userId)) {
+    return res.status(400).render('error', { message: 'Invalid user ID' });
+  }
+
+  try {
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      return res.status(404).render('error', { message: 'User not found' });
+    }
+
+    // Get the list of users this user is following
+    const followingRelations = await prisma.follower.findMany({
+      where: { followerId: userId },
+      include: { following: true }, // ✅ this includes full user data
+    });
+
+    const followingUsers = followingRelations.map(rel => rel.following);
+
+    // 🔍 DEBUG
+    console.log(`📦 [FOLLOWING LIST for userId=${userId}]`);
+    followingUsers.forEach((u, idx) => {
+      console.log(`👉 ${idx + 1}. ${u.username} (id: ${u.id})`);
+    });
+
+    res.render('users/following', {
+      user,
+      following: followingUsers,
+      currentUser: req.user,
+    });
+  } catch (err) {
+    console.error("❌ Error loading following list:", err);
+    res.status(500).render('error', { message: 'Failed to load following list' });
+  }
+};
+
+//***************************************************************************************************************************************
+
+const getFollowersList = async (req, res) => {
+  const userId = parseInt(req.params.id);
+  if (isNaN(userId)) {
+    return res.status(400).render('error', { message: 'Invalid user ID' });
+  }
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: userId }
+    });
+    if (!user) {
+      return res.status(404).render('error', { message: 'User not found' });
+    }
+
+    const followerRelations = await prisma.follower.findMany({
+      where: { followingId: userId },
+      include: { follower: true },
+    });
+
+    const followerUsers = followerRelations.map(rel => rel.follower);
+
+    // Optional logging for debug
+    console.log(`Followers of user ${userId}:`, followerUsers.map(u => u.username));
+
+    res.render('users/followers', {
+      user,
+      followers: followerUsers,
+      currentUser: req.user,
+    });
+  } catch (err) {
+    console.error("❌ Error fetching followers:", err);
+    res.status(500).render('error', { message: 'Failed to load followers' });
+  }
+};
+
+//*******************************************************************************************************************************
+
+const createStory = async (req, res) => {
+  console.log("🔔 createStory route hit");
+
+  // 🧠 Check if user is properly authenticated and has an ID
+  if (!req.user || !req.user.id) {
+    console.log("❌ req.user is missing or invalid:", req.user);
+    return res.status(401).json({ error: "Unauthorized: Missing user session" });
+  }
+
+  console.log("👤 Logged-in user ID:", req.user.id);
+  console.log("📁 Uploaded file:", req.file);
+
+  try {
+    if (!req.file) {
+      console.log("❌ No file uploaded");
+      return res.status(400).json({ error: "No file uploaded" });
+    }
+
+    // ✅ Construct relative file path
+    const mediaUrl = `/uploads/${req.file.filename}`;
+    console.log("✅ SAVED mediaUrl:", mediaUrl);
+
+    // ✅ Detect media type
+    const mediaType = req.file.mimetype.startsWith("video") ? "video" : "image";
+    const expiresAt = new Date(Date.now() + 5 * 60 * 60 * 1000); // Expires in 5 hours
+
+    // ✅ Save to database
+    const story = await prisma.story.create({
+      data: {
+        userId: req.user.id,
+        mediaUrl,
+        mediaType,
+        expiresAt,
+        createdAt: new Date()
+      },
+    });
+
+    console.log("✅ Story created in DB:", story);
+
+    // ✅ Redirect to view stories
+    res.redirect(`/users/stories`);
+  } catch (err) {
+    console.error("❌ Error creating story:", err);
+    res.status(500).json({ error: "Failed to create story" });
+  }
+};
+
+
+
+//************************************************************************************************************************************** */
+const viewStory = async (req, res) => {
+  const userId = req.user.id; // get logged-in user ID here
+
+  try {
+    console.log(`Fetching stories for userId: ${userId}`);
+    const stories = await prisma.story.findMany({
+      where: {
+        userId: userId,
+       // createdAt: {
+         // gte: new Date(Date.now() - 5 * 60 * 60 * 1000) // last 5 hours
+        //}
+      },
+      orderBy: {
+        createdAt: "desc"
+      }
+    });
+     
+
+    console.log("Stories found:", stories.length);
+
+    if (!stories.length) {
+      return res.status(404).send("Story is not available");
+    }
+
+    res.render("story-view", { stories, userId });
+  } catch (err) {
+    console.error("❌ Error fetching story:", err);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
+
 
 
 // ✅ FINAL CORRECT EXPORT
@@ -297,6 +482,9 @@ module.exports = {
   showFollowSuggestions,
   followUser,
   getOtherUserProfile,
-  updateProfile
-  
+  updateProfile,
+  getFollowingList,
+  getFollowersList,
+  createStory,
+  viewStory 
 };  

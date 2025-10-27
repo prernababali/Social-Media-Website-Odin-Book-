@@ -1,0 +1,32 @@
+<%- include('partials/header') %>
+
+<div class="main-content">
+  <h3 class="mb-4 d-flex justify-content-between">
+    Explore 
+    <a href="#" class="text-primary" style="font-size: 0.9rem;">See all</a>
+  </h3>
+
+  <!-- Category Tabs -->
+  <div class="d-flex gap-2 mb-4">
+    <button class="btn btn-sm btn-outline-secondary">Product</button>
+    <button class="btn btn-sm btn-outline-secondary">Website</button>
+    <button class="btn btn-sm btn-outline-secondary">Illustration</button>
+    <button class="btn btn-sm btn-outline-secondary">Branding</button>
+  </div>
+
+  <!-- Explore Grid -->
+  <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3">
+    <% exploreItems.forEach(item => { %>
+      <div class="col">
+        <div class="card h-100 border-0 shadow-sm">
+          <img src="<%= item.imageUrl %>" class="card-img-top rounded" alt="Explore Item">
+          <div class="card-body p-2">
+            <small class="text-muted"><%= item.category %></small>
+          </div>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

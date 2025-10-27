@@ -3,7 +3,9 @@
 <div class="row justify-content-center">
   <div class="col-md-8">
     <h2 class="mb-4 fw-bold text-center">Edit Your Profile</h2>
-    <form action="/users/edit-profile" method="POST" class="shadow p-4 bg-light rounded">
+    <!-- Added enctype for file upload -->
+    <form action="/users/edit-profile" method="POST" enctype="multipart/form-data" class="shadow p-4 bg-light rounded">
+
       <div class="mb-3">
         <label for="name" class="form-label">Full Name</label>
         <input type="text" name="name" id="name" value="<%= user.name %>" class="form-control" required>
@@ -12,6 +14,19 @@
       <div class="mb-3">
         <label for="email" class="form-label">Email (read-only)</label>
         <input type="email" name="email" id="email" value="<%= user.email %>" class="form-control" readonly>
+      </div>
+
+      <div class="mb-3">
+        <label for="bio" class="form-label">Bio</label>
+        <textarea name="bio" id="bio" rows="3" class="form-control"><%= user.bio || '' %></textarea>
+      </div>
+
+      <div class="mb-3">
+        <label for="profilePic" class="form-label">Profile Picture</label>
+        <input type="file" name="profilePic" id="profilePic" class="form-control">
+        <% if (user.profilePic) { %>
+          <img src="<%= user.profilePic %>" alt="Current Profile Picture" class="mt-2 rounded-circle" style="width: 80px; height: 80px; object-fit: cover;">
+        <% } %>
       </div>
 
       <div class="mb-3">
@@ -26,3 +41,4 @@
 </div>
 
 <%- include('../partials/footer') %>
+
