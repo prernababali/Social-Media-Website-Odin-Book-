@@ -83,6 +83,7 @@ const getDashboard = async (req, res) => {
       },
     });
 
+    // Get all people the current user follows
     const followingRelations = await prisma.follower.findMany({
       where: { followerId: req.user.id },
       include: { following: true },
@@ -90,6 +91,7 @@ const getDashboard = async (req, res) => {
 
     const followingIds = followingRelations.map(rel => rel.followingId);
 
+    // Get posts from people the user follows
     const followedPosts = await prisma.post.findMany({
       where: { authorId: { in: followingIds } },
       include: {
@@ -100,18 +102,24 @@ const getDashboard = async (req, res) => {
       orderBy: { createdAt: "desc" },
     });
 
+    // Merge own posts + followed users' posts
     const allPosts = [...currentUser.posts, ...followedPosts].sort(
       (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
     );
 
+    // 👇 Fetch other users (exclude current user + people already followed)
     const otherUsers = await prisma.user.findMany({
       where: {
         id: { notIn: [req.user.id, ...followingIds] },
       },
-      select: { id: true, username: true, imageUrl: true },
+      select: {
+        id: true,
+        username: true,
+        profilePic: true, // ✅ Use the correct profile picture field
+      },
     });
 
-    // 👇 Dummy explore items
+    // Optional: items for "explore" section
     const exploreItems = [
       { imageUrl: '/images/explore_page1.jpg', category: 'Product' },
       { imageUrl: '/images/explore_page2.jpg', category: 'Website' },
@@ -119,16 +127,51 @@ const getDashboard = async (req, res) => {
       { imageUrl: '/images/explore_page4.jpg', category: 'Branding' },
     ];
 
+    // ✅ Render the dashboard
     res.render("dashboard", {
       currentUser,
       posts: allPosts,
       otherUsers,
       followingIds,
-      exploreItems, // ✅ pass here
+      exploreItems,
     });
   } catch (err) {
     console.error("❌ getDashboard error:", err);
     res.status(500).send("Server error");
+  }
+};
+
+//*********************************************************************************************************************************** *const showFriends = async (req, res) => {
+ const showFriends = async (req, res) => {
+  try {
+    const currentUserId = req.user.id;
+
+    const following = await prisma.follower.findMany({
+      where: { followerId: currentUserId },
+      select: { followingId: true },
+    });
+
+    const followingIds = following.map(f => f.followingId);
+
+    const friendsSuggestions = await prisma.user.findMany({
+      where: {
+        id: { notIn: [currentUserId, ...followingIds] },
+      },
+      select: {
+        id: true,
+        username: true,
+        profilePic: true,
+      },
+      take: 20,
+    });
+
+    res.render('friends', {
+      currentUser: req.user,
+      friendsSuggestions,
+    });
+  } catch (error) {
+    console.error("❌ showFriends error:", error);
+    res.status(500).render('error', { message: "Could not load friends suggestions" });
   }
 };
 
@@ -472,6 +515,14 @@ const viewStory = async (req, res) => {
 };
 
 
+//******************************************************************************************************************************************//
+
+
+
+
+
+
+
 
 
 // ✅ FINAL CORRECT EXPORT
@@ -479,6 +530,7 @@ module.exports = {
   getProfile,
   postProfile,
   getDashboard,
+   showFriends,
   showFollowSuggestions,
   followUser,
   getOtherUserProfile,
@@ -486,5 +538,6 @@ module.exports = {
   getFollowingList,
   getFollowersList,
   createStory,
-  viewStory 
+  viewStory
+
 };  

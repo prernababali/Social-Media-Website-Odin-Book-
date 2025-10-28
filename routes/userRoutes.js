@@ -23,6 +23,11 @@ router.use((req, res, next) => {
 router.get('/dashboard', ensureAuth, userController.getDashboard);
 router.get('/suggestions', ensureAuth, userController.showFollowSuggestions);
 
+
+router.get('/friends', ensureAuth, userController.showFriends);
+
+
+
 // ==================== LOGGED-IN USER PROFILE ====================
 router.get('/profile', ensureAuth, async (req, res) => {
   try {

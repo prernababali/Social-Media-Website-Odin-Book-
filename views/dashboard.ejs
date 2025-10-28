@@ -1,249 +1,293 @@
 <%- include('partials/header') %>
 
-<!-- Google Font -->
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 
 <style>
-  body {
-    font-family: 'Inter', sans-serif;
-    background-color: #f3f4f6;
-  }
-
-  .avatar {
-    width: 45px;
-    height: 45px;
-    object-fit: cover;
-    border-radius: 50%;
-  }
-
-  .suggestion-avatar {
-    width: 32px;
-    height: 32px;
-    object-fit: cover;
-    border-radius: 50%;
-  }
-
-  .sidebar {
-    height: 100vh;
-    background-color: white;
-    padding-top: 2rem;
-    position: fixed;
-    left: 0;
-    top: 0;
-    width: 240px;
-    border-right: 1px solid #e5e7eb;
-    overflow-y: auto;
-  }
-
-  .sidebar a {
-    display: block;
-    color: #333;
-    padding: 0.75rem 1rem;
-    text-decoration: none;
-    font-weight: 500;
-  }
-
-  .sidebar a:hover {
-    background-color: #f0f0f0;
-    border-radius: 8px;
-  }
-
-  .grid-img {
+  /* Reset & full width */
+  html, body {
+    height: 100%;
     width: 100%;
-    height: 90px;
-    object-fit: cover;
-    border-radius: 10px;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background: #f3f4f6;
+    font-family: 'Inter', sans-serif;
+    box-sizing: border-box;
   }
 
-  .suggestion-card {
+  /* Override bootstrap/container centering */
+  .container, .container-fluid, .navbar, header, .site-header {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Layout wrapper */
+  .layout-wrapper {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+    margin: 0;
+    padding: 0;
+    gap: 0;
+    align-items: stretch;
+    justify-content: stretch;
+    overflow: hidden;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    width: 260px;
+    min-width: 260px;
+    height: 100vh;
     background: #fff;
-    border-radius: 20px;
+    padding: 1.5rem 1rem;
+    overflow-y: auto;
+    border-right: 1px solid #e5e7eb;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .sidebar .text-center {
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .sidebar .avatar {
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  /* Username & stats */
+  .username {
+    font-weight: 600;
+    font-size: 18px;
+    margin-top: 10px;
+    color: #333;
+  }
+
+  .follow-stats {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    margin-top: 10px;
+    font-size: 14px;
+    color: #666;
+  }
+
+  .follow-stats strong {
+    font-size: 16px;
+    color: #111;
+  }
+
+  /* Sidebar menu */
+  .sidebar-menu {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-top: 20px;
+  }
+
+  .sidebar-menu a {
+    text-decoration: none;
+    color: #333;
+    padding: 0.7rem 1rem;
+    border-radius: 8px;
+    font-weight: 500;
+    margin-bottom: 4px;
+    transition: background 0.2s;
+  }
+
+  .sidebar-menu a:hover {
+    background-color: #f0f0f0;
+  }
+
+  /* Main content */
+  .main-content {
+    flex: 1 1 auto;
+    width: auto !important;
+    min-width: 0;
+    height: 100vh;
     padding: 1.5rem;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+    overflow-y: auto;
+    background: transparent;
+  }
+
+  /* Feed grid */
+  .feed-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    width: 100%;
+  }
+
+  .feed-card {
+    position: relative;
+    border-radius: 10px;
+    overflow: hidden;
+    cursor: pointer;
+  }
+
+  .feed-card img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    display: block;
+  }
+
+  .feed-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.35);
+    opacity: 0;
+    transition: opacity .18s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-weight: 600;
+  }
+
+  .feed-card:hover .feed-overlay { opacity: 1; }
+
+  /* Suggestion panel */
+  .suggestion-panel {
+    width: 300px;
+    min-width: 300px;
+    height: 100vh;
+    overflow-y: auto;
+    padding: 1.2rem;
+    background: #fff;
+    border-left: 1px solid #e5e7eb;
+    box-shadow: none;
+  }
+
+  .avatar, .suggestion-avatar {
+    border-radius: 50%;
+    object-fit: cover;
+    display: inline-block;
   }
 
   .btn-blue {
     background-color: #1877f2;
-    color: white;
-    font-size: 0.85rem;
-    font-weight: 600;
-    border-radius: 8px;
-    padding: 0.3rem 0.8rem;
+    color: #fff;
     border: none;
-  }
-
-  .btn-outline-info {
-    border: 2px solid #00bcd4;
-    color: #00bcd4;
-    background: none;
-  }
-
-  .btn-outline-info:hover {
-    background: #00bcd4;
-    color: white;
-  }
-
-  .main-content {
-    margin-left: 260px;
-    margin-right: 320px;
-    padding: 2rem;
-  }
-
-  .post-card img {
-    border-radius: 10px;
-    object-fit: cover;
-    width: 100%;
-    max-height: 400px;
-  }
-
-  .explore-thumb {
-    width: 100%;
-    height: 100px;
-    object-fit: cover;
+    padding: .35rem .8rem;
     border-radius: 8px;
-    margin-bottom: 4px;
-    border: 1px solid #ddd;
+    font-weight: 600;
+  }
+
+  h1,h2,h3,h4,h5,h6,p {
+    margin: 0;
+    padding: 0;
+  }
+
+  body, .layout-wrapper, .main-content, .sidebar, .suggestion-panel {
+    -webkit-overflow-scrolling: touch;
   }
 </style>
 
-<!-- Sidebar -->
-<div class="sidebar">
-  <div class="text-center mb-4">
-    <img src="<%= currentUser.imageUrl || '/images/default-avatar.png' %>" class="avatar mb-2">
-    <div><strong><%= currentUser.username %></strong></div>
+
+<div class="layout-wrapper">
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="text-center mb-4">
+      <img src="<%= currentUser.profilePic || '/images/default-avatar.png' %>" class="avatar" width="80" height="80">
+
+      <div class="username"><%= currentUser.username %></div>
+
+      <div class="follow-stats">
+        <div>
+          <strong><%= currentUser.followersCount || 2802 %></strong><br>
+          <span>Followers</span>
+        </div>
+        <div>
+          <strong><%= currentUser.followingCount || 980 %></strong><br>
+          <span>Following</span>
+        </div>
+      </div>
+    </div>
+
+    <nav class="sidebar-menu">
+      <a href="#">🏠 Home</a>
+      <a href="/users/friends">👥 Friends</a>
+
+      <a href="#">🎥 Watch</a>
+      <a href="#">📄 Pages</a>
+      <a href="#">📅 Events</a>
+      <a href="#">🛒 Marketplace</a>
+    </nav>
   </div>
-  <a href="#">🏠 Home</a>
-  <a href="#">👥 Friends</a>
-  <a href="#">🎥 Watch</a>
-  <a href="#">📄 Pages</a>
-  <a href="#">📅 Events</a>
-  <a href="#">🛒 Marketplace</a>
 
-  <!-- Explore Section -->
-  <div class="p-3">
-    <h6 class="d-flex justify-content-between align-items-center">
-      Explore 
-      <a href="#" class="text-primary small">See all</a>
-    </h6>
+  <!-- Main Content -->
+  <div class="main-content">
+    <div class="d-flex align-items-center mb-4">
+      <img src="<%= currentUser.profilePic || '/images/default-avatar.png' %>" class="avatar" width="80" height="80">
 
-  
-    <!-- Explore Grid 2x2 -->
-    <% if (exploreItems && exploreItems.length > 0) { %>
-      <div class="d-flex flex-wrap" style="gap: 8px;">
-        <% exploreItems.forEach(function(item) { %>
-          <div style="width: calc(50% - 4px);">
-            <img src="<%= item.imageUrl %>" alt="Explore Item" class="explore-thumb">
-            <small class="text-muted d-block"><%= item.category %></small>
-          </div>
+      <h4 class="mb-0">Welcome, <%= currentUser.username %>!</h4>
+    </div>
+
+    <div class="mb-4">
+      <a href="/users/<%= currentUser.id %>" class="btn btn-outline-info me-2">👤 View My Profile</a>
+      <a href="/posts/new" class="btn btn-blue">+ New Post</a>
+    </div>
+
+    <% if (posts.length > 0) { %>
+      <div class="feed-grid">
+        <% posts.forEach(function(post) { %>
+          <a href="/posts/<%= post.id %>" class="feed-card">
+            <img src="<%= post.imageUrl || '/images/default-post.png' %>" alt="Post Image">
+            <div class="feed-overlay">
+              ❤️ <%= post.likes?.length || 0 %> &nbsp;&nbsp; 💬 <%= post.comments?.length || 0 %>
+            </div>
+          </a>
         <% }); %>
       </div>
     <% } else { %>
-      <p class="text-muted small">No explore items yet.</p>
+      <p class="text-muted">No posts yet from you or people you follow.</p>
     <% } %>
   </div>
-</div>
 
-<!-- Main Content -->
-<div class="main-content">
-  <div class="d-flex align-items-center mb-4">
-    <img src="<%= currentUser.imageUrl || '/images/default-avatar.png' %>" class="avatar me-3">
-    <h4 class="mb-0">Welcome, <%= currentUser.username %>!</h4>
-  </div>
-
-  <div class="mb-4">
-    <a href="/users/<%= currentUser.id %>" class="btn btn-outline-info me-2">👤 View My Profile</a>
-    <a href="/posts/new" class="btn btn-blue">+ New Post</a>
-  </div>
-
-  <% if (posts.length > 0) { %>
-    <div class="row row-cols-3 row-cols-md-4 row-cols-lg-6 g-3 mb-4">
-      <% posts.forEach(function(post) { %>
-        <% if (post.imageUrl) { %>
-          <div class="col">
-            <img src="<%= post.imageUrl %>" alt="Post" class="grid-img">
-          </div>
-        <% } %>
-      <% }); %>
-    </div>
+  <!-- Suggested Users -->
+<div class="suggestion-panel">
+  <h5 class="mb-3">Suggested Users</h5>
+  <% if (otherUsers.length === 0) { %>
+    <p class="text-muted">No suggestions yet.</p>
   <% } else { %>
-    <p class="text-muted">No posts yet from you or people you follow.</p>
-  <% } %>
+    <% otherUsers.forEach(function(user) { %>
+      <div class="d-flex align-items-center justify-content-between mb-3">
+        <div class="d-flex align-items-center">
+          <!-- ✅ Show uploaded profile picture if available, else default avatar -->
+          <img 
+            src="<%= user.profilePic || user.imageUrl || '/images/default-avatar.png' %>" 
+            class="suggestion-avatar me-2" 
+            width="40" 
+            height="40" 
+            alt="<%= user.username %>'s profile picture">
 
-  <% posts.forEach(function(post) { %>
-    <div class="card mb-4 p-3 post-card">
-      <div class="d-flex align-items-center mb-3">
-        <img src="<%= post.author.imageUrl || '/images/default-avatar.png' %>" class="avatar me-2">
-        <div>
-          <h6 class="mb-0">@<%= post.author.username %></h6>
-          <small class="text-muted"><%= post.createdAt.toDateString() %></small>
-        </div>
-      </div>
-
-      <% if (post.imageUrl) { %>
-        <img src="<%= post.imageUrl %>" class="mb-3" alt="Post Image">
-      <% } %>
-
-      <p><%= post.content %></p>
-
-      <div class="d-flex gap-2 mb-3">
-        <form action="/posts/<%= post.id %>/like" method="POST">
-          <button type="submit" class="btn btn-sm btn-outline-primary">❤️ Like (<%= post.likes?.length || 0 %>)</button>
-        </form>
-        <a href="/posts/<%= post.id %>" class="btn btn-sm btn-outline-secondary">💬 View</a>
-
-        <% if (post.authorId === currentUser.id) { %>
-          <form action="/posts/<%= post.id %>?_method=DELETE" method="POST" onsubmit="return confirm('Are you sure?');">
-            <button type="submit" class="btn btn-sm btn-danger">🗑️ Delete</button>
-          </form>
-        <% } %>
-      </div>
-
-      <% if (post.comments?.length > 0) { %>
-        <div class="mb-3">
-          <h6 class="text-muted">💬 Comments</h6>
-          <ul class="list-group list-group-flush">
-            <% post.comments.forEach(function(comment) { %>
-              <li class="list-group-item">
-                <strong>@<%= comment.user.username %>:</strong> <%= comment.text %>
-              </li>
-            <% }); %>
-          </ul>
-        </div>
-      <% } %>
-
-      <form action="/posts/<%= post.id %>/comment" method="POST" class="d-flex">
-        <input type="text" name="comment" class="form-control me-2" placeholder="Write a comment..." required>
-        <button type="submit" class="btn btn-sm btn-outline-success">Post</button>
-      </form>
-    </div>
-  <% }); %>
-</div>
-
-<!-- Suggested Users -->
-<div class="position-fixed top-0 end-0 p-4" style="width: 300px; margin-top: 80px;">
-  <div class="suggestion-card">
-    <h5 class="mb-3">Suggested Users</h5>
-    <% if (otherUsers.length === 0) { %>
-      <p class="text-muted">No suggestions yet.</p>
-    <% } else { %>
-      <% otherUsers.forEach(function(user) { %>
-        <div class="d-flex align-items-center justify-content-between mb-3">
-          <div class="d-flex align-items-center">
-            <img src="<%= user.imageUrl || '/images/default-avatar.png' %>" class="suggestion-avatar me-2">
-            <div>
-              <strong><%= user.username %></strong><br>
-              <a href="/users/<%= user.id %>" class="text-decoration-none text-primary" style="font-size: 0.85rem;">View Profile</a>
-            </div>
+          <div>
+            <strong><%= user.username %></strong><br>
+            <a href="/users/<%= user.id %>" 
+               class="text-decoration-none text-primary" 
+               style="font-size: 0.85rem;">
+              View Profile
+            </a>
           </div>
-          <form action="/users/<%= user.id %>/follow" method="POST">
-            <button type="submit" class="btn btn-blue btn-sm">
-              <%= followingIds.includes(user.id) ? 'Unfollow' : 'Follow' %>
-            </button>
-          </form>
         </div>
-      <% }); %>
-    <% } %>
-  </div>
+
+        <form action="/users/<%= user.id %>/follow" method="POST">
+          <button type="submit" class="btn btn-blue btn-sm">
+            <%= followingIds.includes(user.id) ? 'Unfollow' : 'Follow' %>
+          </button>
+        </form>
+      </div>
+    <% }); %>
+  <% } %>
 </div>
 
-<%- include('partials/footer') %>
+
+
